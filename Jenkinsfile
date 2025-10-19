@@ -9,77 +9,71 @@ pipeline {
     environment {
         APP_NAME = 'vegana-shop'
         PORT = '8082'
+        WORKSPACE_DIR = 'Vegana-shop'
     }
 
     stages {
         stage('🏗️ Build Application') {
             steps {
                 echo '📦 Building Vegana Shop...'
-                sh 'mvn clean compile'
+                dir("${WORKSPACE_DIR}") {
+                    sh 'mvn clean compile'
+                }
             }
         }
 
         stage('🧪 Run Tests') {
             steps {
                 echo '🔍 Running tests...'
-                sh 'mvn test -DskipTests=true'
+                dir("${WORKSPACE_DIR}") {
+                    sh 'mvn test -DskipTests=true'
+                }
             }
         }
 
         stage('📦 Package Application') {
             steps {
-                echo '📦 Creating WAR/JAR...'
-                sh 'mvn package -DskipTests'
-                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+                echo '📦 Creating WAR...'
+                dir("${WORKSPACE_DIR}") {
+                    sh 'mvn package -DskipTests'
+                }
             }
         }
 
         stage('🚀 Deploy Application') {
             steps {
-                echo '🚀 Deploying Vegana Shop on port 8082...'
+                echo '🚀 Deploying on port 8082...'
                 sh '''
-                    # Kill old app on port 8082
-                    pkill -9 -f "vegana-shop" || true
+                    # Kill old app
+                    pkill -9 -f "vegana" || true
+                    sleep 3
 
-                    # Find and kill process using port 8082
-                    if lsof -Pi :8082 -sTCP:LISTEN -t >/dev/null 2>&1; then
-                        lsof -ti:8082 | xargs kill -9 || true
-                    fi
-
-                    sleep 5
+                    # Navigate to project folder
+                    cd Vegana-shop
 
                     # Start new app
-                    cd /var/jenkins_home/workspace/Vegana-Shop-CI-CD
-                    BUILD_ID=dontKillMe setsid nohup java -jar target/*.war > /tmp/vegana-shop.log 2>&1 < /dev/null &
+                    BUILD_ID=dontKillMe setsid nohup java -jar target/*.war > /tmp/vegana.log 2>&1 < /dev/null &
 
-                    echo "Waiting 40 seconds for app to start..."
-                    sleep 40
+                    sleep 30
                 '''
             }
         }
 
         stage('🔍 Health Check') {
             steps {
-                echo '🏥 Checking if app is running...'
-                sh 'curl -f http://localhost:8082 || echo "App is starting..."'
+                echo '🏥 Health check...'
+                sh 'curl -f http://localhost:8082 || echo "Starting..."'
             }
         }
     }
 
     post {
         success {
-            echo '''
-            🎉 Vegana Shop CI/CD SUCCESS!
-
-            ✅ Build: SUCCESS
-            ✅ Tests: PASSED
-            ✅ Deploy: SUCCESS
-
-            🌐 Access: http://localhost:8082
-            '''
+            echo '🎉 CI/CD Pipeline SUCCESS!'
+            echo 'Access: http://localhost:8082'
         }
         failure {
-            echo 'Pipeline FAILED - check logs'
+            echo '❌ Pipeline FAILED'
         }
     }
 }
