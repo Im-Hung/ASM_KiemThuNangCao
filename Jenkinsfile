@@ -10,36 +10,19 @@ pipeline {
         APP_NAME = 'vegana-shop'
         PORT = '8082'
         WORKSPACE_DIR = 'Vegana-shop'
-        MAVEN_OPTS = '-Dfile.encoding=UTF-8'
     }
 
     stages {
-        stage('🏗️ Build Application') {
+        stage('🏗️ Build & Package') {
             steps {
                 echo '📦 Building Vegana Shop...'
                 dir("${WORKSPACE_DIR}") {
                     sh '''
-                        export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
-                        mvn clean compile -DskipTests
+                        # Build with resource filtering disabled
+                        mvn clean package -DskipTests \
+                            -Dmaven.resources.filtering=false \
+                            -Dproject.build.sourceEncoding=UTF-8
                     '''
-                }
-            }
-        }
-
-        stage('🧪 Run Tests') {
-            steps {
-                echo '🔍 Running tests...'
-                dir("${WORKSPACE_DIR}") {
-                    sh 'mvn test -DskipTests=true || true'
-                }
-            }
-        }
-
-        stage('📦 Package Application') {
-            steps {
-                echo '📦 Creating WAR...'
-                dir("${WORKSPACE_DIR}") {
-                    sh 'mvn package -DskipTests'
                 }
             }
         }
@@ -48,13 +31,11 @@ pipeline {
             steps {
                 echo '🚀 Deploying on port 8082...'
                 sh '''
-                    # Kill old app
                     pkill -9 -f "vegana" || true
                     sleep 3
 
-                    # Navigate and start
-                    cd Vegana-shop
-                    BUILD_ID=dontKillMe setsid nohup java -jar target/*.war > /tmp/vegana.log 2>&1 < /dev/null &
+                    cd Vegana-shop/target
+                    BUILD_ID=dontKillMe setsid nohup java -jar *.war > /tmp/vegana.log 2>&1 < /dev/null &
 
                     sleep 30
                 '''
@@ -63,19 +44,26 @@ pipeline {
 
         stage('🔍 Health Check') {
             steps {
-                echo '🏥 Health check...'
-                sh 'curl -f http://localhost:8082 || echo "App starting..."'
+                echo '🏥 Checking app...'
+                sh '''
+                    curl -f http://localhost:8082 || echo "App starting..."
+                    ps aux | grep vegana | grep -v grep || echo "Process not found"
+                '''
             }
         }
     }
 
     post {
         success {
-            echo '🎉 Vegana Shop CI/CD SUCCESS!'
-            echo 'Access: http://localhost:8082'
+            echo '''
+            🎉 CI/CD Pipeline SUCCESS!
+
+            Access: http://localhost:8082
+            Logs: docker exec -it jenkins tail -f /tmp/vegana.log
+            '''
         }
         failure {
-            echo '❌ Pipeline FAILED - check logs'
+            echo '❌ Pipeline FAILED'
         }
     }
 }
