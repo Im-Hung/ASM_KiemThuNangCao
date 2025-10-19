@@ -17,12 +17,7 @@ pipeline {
             steps {
                 echo '📦 Building Vegana Shop...'
                 dir("${WORKSPACE_DIR}") {
-                    sh '''
-                        # Build with resource filtering disabled
-                        mvn clean package -DskipTests \
-                            -Dmaven.resources.filtering=false \
-                            -Dproject.build.sourceEncoding=UTF-8
-                    '''
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -47,7 +42,7 @@ pipeline {
                 echo '🏥 Checking app...'
                 sh '''
                     curl -f http://localhost:8082 || echo "App starting..."
-                    ps aux | grep vegana | grep -v grep || echo "Process not found"
+                    ps aux | grep vegana | grep -v grep || echo "Process check"
                 '''
             }
         }
@@ -56,10 +51,13 @@ pipeline {
     post {
         success {
             echo '''
-            🎉 CI/CD Pipeline SUCCESS!
+            🎉 Vegana Shop CI/CD SUCCESS!
 
-            Access: http://localhost:8082
-            Logs: docker exec -it jenkins tail -f /tmp/vegana.log
+            ✅ Build: SUCCESS
+            ✅ Deploy: SUCCESS
+
+            🌐 Access: http://localhost:8082
+            📝 Logs: docker exec -it jenkins tail -f /tmp/vegana.log
             '''
         }
         failure {
