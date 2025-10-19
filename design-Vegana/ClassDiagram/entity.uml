@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.java.entity</OriginalElement>
+  <nodes>
+    <node x="420.0" y="289.5714285714286">com.java.entity.Order</node>
+    <node x="102.0" y="698.0">com.java.entity.Product</node>
+    <node x="397.5" y="-27.0">com.java.entity.OrderExcelExporter</node>
+    <node x="420.0" y="698.0">com.java.entity.Cart</node>
+    <node x="102.0" y="1126.0">com.java.entity.Supplier</node>
+    <node x="738.0" y="675.7142857142857">com.java.entity.Customer</node>
+    <node x="578.0" y="1152.903743315508">com.java.entity.BillViewDTO</node>
+    <node x="420.0" y="991.4518716577539">com.java.entity.RevenueViewDTO</node>
+    <node x="102.0" y="281.0">com.java.entity.OrderDetail</node>
+    <node x="347.0" y="1152.903743315508">com.java.entity.CartProductViewDTO</node>
+    <node x="-216.0" y="729.0">com.java.entity.Category</node>
+    <node x="807.0" y="1152.903743315508">com.java.entity.MailInfo</node>
+    <node x="807.0" y="405.7142857142857">com.java.entity.Role</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.java.entity.Customer" target="com.java.entity.Role" relationship="TO_MANY">
+      <point x="15.0" y="-215.5" />
+      <point x="15.0" y="83.50000000000006" />
+    </edge>
+    <edge source="com.java.entity.Cart" target="com.java.entity.Customer" relationship="TO_ONE">
+      <point x="92.0" y="54.714285714285666" />
+      <point x="-161.0" y="0.0" />
+    </edge>
+    <edge source="com.java.entity.OrderExcelExporter" target="com.java.entity.Order" relationship="TO_MANY">
+      <point x="-15.0" y="127.5" />
+      <point x="-15.0" y="-149.5" />
+    </edge>
+    <edge source="com.java.entity.Product" target="com.java.entity.Category" relationship="TO_ONE">
+      <point x="-92.0" y="-57.0" />
+      <point x="92.0" y="0.0" />
+    </edge>
+    <edge source="com.java.entity.OrderDetail" target="com.java.entity.Product" relationship="TO_ONE">
+      <point x="0.0" y="138.5" />
+      <point x="0.0" y="-171.5" />
+    </edge>
+    <edge source="com.java.entity.OrderDetail" target="com.java.entity.Order" relationship="TO_ONE">
+      <point x="92.0" y="0.0" />
+      <point x="-92.0" y="-19.571428571428612" />
+    </edge>
+    <edge source="com.java.entity.Order" target="com.java.entity.Customer" relationship="TO_ONE">
+      <point x="92.0" y="0.0" />
+      <point x="789.5" y="439.0714285714286" />
+      <point x="-109.5" y="-215.5" />
+    </edge>
+    <edge source="com.java.entity.Product" target="com.java.entity.Supplier" relationship="TO_ONE">
+      <point x="0.0" y="171.5" />
+      <point x="0.0" y="-105.5" />
+    </edge>
+    <edge source="com.java.entity.OrderExcelExporter" target="com.java.entity.Order" relationship="DEPENDENCY">
+      <point x="0.0" y="127.5" />
+      <point x="0.0" y="-149.5" />
+    </edge>
+    <edge source="com.java.entity.Cart" target="com.java.entity.Product" relationship="TO_ONE">
+      <point x="-92.0" y="33.0" />
+      <point x="92.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.55" showDependencies="true" x="292.3048128342248" y="902.8181818181818" />
+  <SelectedNodes>
+    <node>com.java.entity.MailInfo</node>
+    <node>com.java.entity.BillViewDTO</node>
+    <node>com.java.entity.CartProductViewDTO</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
