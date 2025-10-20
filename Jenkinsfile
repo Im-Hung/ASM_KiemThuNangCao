@@ -30,9 +30,9 @@ pipeline {
                     sleep 3
 
                     cd Vegana-shop/target
-                    BUILD_ID=dontKillMe setsid nohup java -jar *.war > /tmp/vegana.log 2>&1 < /dev/null &
+                    BUILD_ID=dontKillMe setsid nohup java -jar *.jar > /tmp/vegana.log 2>&1 < /dev/null &
 
-                    sleep 30
+                    sleep 40
                 '''
             }
         }
